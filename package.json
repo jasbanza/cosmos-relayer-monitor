@@ -1,0 +1,25 @@
+{
+  "name": "cosmos-relayer-monitor",
+  "version": "1.0.0",
+  "description": "- linux system service\r - Uses nodejs to:\r   - start relayer instances (one instance per path)\r   - rly stdout redirected to websocket\r   - http server with dashboard to monitor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "jasbanza",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasbanza/cosmos-relayer-monitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jasbanza/cosmos-relayer-monitor/issues"
+  },
+  "homepage": "https://github.com/jasbanza/cosmos-relayer-monitor#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "readline": "^1.3.0",
+    "ws": "^8.14.2"
+  }
+}

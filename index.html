@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        --color1: #eeeeee;
+        --color2: #aaaaaa;
+      }
+      body {
+        background-color: black;
+        color: white;
+        overflow: hidden;
+      }
+      #header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        height: 50px;
+        background-color: #333;
+        color: white;
+        font: 0.8em sans-serif;
+        /* align-items: center; */
+      }
+
+      #header .setting {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0 10px;
+      }
+      #header .setting .setting-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      #header .setting .setting-item label {
+        margin-right: 5px;
+      }
+      #console {
+        white-space: pre-wrap;
+        font-family: monospace;
+        height: calc(100vh - 100px);
+        overflow: auto;
+      }
+
+      #console span {
+        color: var(--color1);
+      }
+
+      #console.alternate-colors span:nth-child(even) {
+        color: var(--color1);
+      }
+      #console.alternate-colors span:nth-child(odd) {
+        color: var(--color2);
+      }
+
+      #console .ws-status-open {
+        color: rgb(0, 255, 0) !important;
+      }
+      #console .ws-status-closed {
+        color: red !important;
+      }
+
+      label {
+        margin-left: 10px;
+      }
+
+      #setting-alternate-colors .color-field {
+        width: 65px;
+      }
+
+      #preview-color1 {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        background-color: var(--color1);
+      }
+
+      #preview-color2 {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        background-color: var(--color2);
+      }
+
+      @media (max-width: 600px) {
+        #header {
+          height: auto;
+          flex-direction: column;
+          align-items: center;
+        }
+        #header .setting {
+          flex-direction: column;
+          padding: 5px;
+        }
+        #header .setting * {
+          margin-top: 2px;
+        }
+
+        #header .setting .setting-item {
+          width: 100%;
+          justify-content: end;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- header panel with checkboxes -->
+    <div id="header">
+      <div class="setting" id="setting-alternate-colors">
+        <div class="setting-item">
+          <label for="color1">Message color</label>
+          <input type="text" class="color-field" id="color1" value="#FFFFFF" />
+          <div id="preview-color1"></div>
+        </div>
+        <div class="setting-item">
+          <label for="alternateColors">Alternate</label>
+          <input type="checkbox" checked id="alternateColors" />
+          <input type="text" class="color-field" id="color2" value="#AAAAAA" />
+          <div id="preview-color2"></div>
+        </div>
+      </div>
+      <div class="setting">
+        <div class="setting-item">
+          <label for="autoScroll">Auto-scroll</label>
+          <input type="checkbox" checked id="autoScroll" />
+        </div>
+        <div class="setting-item">
+          <button onclick="document.getElementById('console').innerHTML = ''">
+            Clear Console
+          </button>
+        </div>
+      </div>
+    </div>
+    <pre id="console" class="alternate-colors"></pre>
+    <script>
+      const consoleElement = document.getElementById("console");
+      var alternateColorsCheckbox = document.getElementById("alternateColors");
+      var color1Input = document.getElementById("color1");
+      var color2Input = document.getElementById("color2");
+
+      alternateColorsCheckbox.addEventListener("change", function () {
+        const settingAlternateColors = document.getElementById(
+          "setting-alternate-colors"
+        );
+        if (this.checked) {
+          consoleElement.classList.add("alternate-colors");
+          color2Input.disabled = false;
+        } else {
+          consoleElement.classList.remove("alternate-colors");
+          color2Input.disabled = true;
+        }
+      });
+
+      color1Input.addEventListener("input", function () {
+        var color1 = this.value;
+        document.body.style.setProperty("--color1", color1);
+      });
+
+      color2Input.addEventListener("input", function () {
+        var color2 = this.value;
+        document.body.style.setProperty("--color2", color2);
+      });
+
+      // Connect to the relayer. if the connection is closed, try to reconnect:
+
+      var ws;
+      reconnect();
+
+      function reconnect() {
+        ws = new WebSocket("ws://" + location.host + "/ws");
+        ws.onopen = wsOnOpen;
+        ws.onclose = wsOnClose;
+      }
+
+      function wsOnMessage(event) {
+        console.log("WebSocket message received:", event.data);
+        var messageElement = document.createElement("span");
+
+        messageElement.textContent = event.data;
+        consoleElement.appendChild(messageElement);
+
+        var autoScrollCheckbox = document.getElementById("autoScroll");
+        if (autoScrollCheckbox.checked) {
+          consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+      }
+
+      function wsOnOpen(event) {
+        console.log("WebSocket connection opened", event.reason);
+        var wsStatusElement = document.createElement("span");
+        wsStatusElement.classList.add("ws-status-open");
+        wsStatusElement.textContent = "WebSocket connection opened\n";
+        consoleElement.appendChild(wsStatusElement);
+        consoleElement.scrollTop = consoleElement.scrollHeight;
+        // Listen for messages
+        ws.onmessage = wsOnMessage;
+      }
+
+      function wsOnClose(event) {
+        console.log(
+          "WebSocket connection closed. Reconnecting...",
+          event.reason
+        );
+        var wsStatusElement = document.createElement("span");
+        wsStatusElement.classList.add("ws-status-closed");
+        wsStatusElement.textContent =
+          "WebSocket connection closed. Reconnecting...\n";
+        consoleElement.appendChild(wsStatusElement);
+        consoleElement.scrollTop = consoleElement.scrollHeight;
+        // Attempt to reconnect
+        reconnect();
+      }
+    </script>
+  </body>
+</html>
