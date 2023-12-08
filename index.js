@@ -1,4 +1,5 @@
-const PATH = '/home/jason/go/bin/rly';
+
+const commands = require('./commands.json').commands;
 
 const path = require('path');
 const express = require('express');
@@ -20,31 +21,37 @@ server.listen(3000, () => {
 });
 
 // start relayer
+commands.forEach(command => {
+    let process;
+    const isWindows = os.platform() === "win32";
+    if (isWindows) {
+        process = spawn('wsl', [command.path, ...command.arguments]);
+    }
+    else {
+        process = spawn(command.path, command.arguments);
+    }
 
-let rlyProcess;
-const isWindows = os.platform() === "win32";
-if (isWindows) {
-    // rlyProcess = spawn('wsl', ['/home/jason/go/bin/rly', 'config','osmosis-cosmoshub']);
-    rlyProcess = spawn('wsl', ['ping', '8.8.8.8']);
-}
-else {
-    rlyProcess = spawn('rly', ['start']);
-    // rlyProcess = spawn('ping', ['8.8.8.8']);
-}
+    // process stdout handler
+    process.stdout.on('data', (data) => {
+        console.log(data.toString());
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ stdout: data.toString(), info: command.info }));
+            }
+        });
+    });
 
-
-// relayer stdout handler
-rlyProcess.stdout.on('data', (data) => {
-    console.log(`wss:${data}`);
-    wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(data.toString());
-        }
+    // process stderr handler
+    process.stderr.on('data', (data) => {
+        console.log(data.toString());
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ stderr: data.toString(), info: command.info }));
+            }
+        });
     });
 });
 
-
-// log the relayer stdout to an emulated console
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
 });

@@ -7,3 +7,7 @@
   
 - optional configuration:
   - periodic restart of relayers
+
+
+- contextual awareness for 
+  - insufficient fee

@@ -6,119 +6,226 @@
       :root {
         --color1: #eeeeee;
         --color2: #aaaaaa;
+        --highlight-color: #303030;
+        --highlight-enabled: true;
+        --font-size: 12px;
       }
       body {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
         background-color: black;
         color: white;
         overflow: hidden;
+        font-family: monospace;
       }
-      #header {
+      .header {
+        width: 100%;
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-evenly;
-        height: 50px;
-        background-color: #333;
+        background-color: #666;
         color: white;
         font: 0.8em sans-serif;
-        /* align-items: center; */
+        padding: 5px;
       }
-
-      #header .setting {
+      .header .setting {
         display: flex;
         flex-direction: row;
         align-items: center;
-        margin: 0 10px;
+        margin: 2px 10px;
+        background-color: #333;
+        padding: 2px;
+        border-radius: 3px;
       }
-      #header .setting .setting-item {
+      .header .setting .setting-item {
         display: flex;
         flex-direction: row;
         align-items: center;
       }
-      #header .setting .setting-item label {
+      .header .setting .setting-item label {
         margin-right: 5px;
       }
-      #console {
-        white-space: pre-wrap;
+      .header .setting .setting-item input[type="text"] {
+        width: 9ch;
+        min-width: 9ch;
+        text-align: center;
+      }
+
+      .console-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        color: var(--color1, #eeeeee);
         font-family: monospace;
-        height: calc(100vh - 100px);
+        font-size: var(--font-size, 12px);
+        overflow-y: auto;
+        transition: font-size 0.2s ease-in-out;
+      }
+
+      .console-row {
+        display: flex;
+        gap: 5ch;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      /* .new-row {
+        animation: flash 0.05s ease-in-out;
+      } */
+
+      .console-row:hover {
+        background-color: var(--highlight-color, #303030);
+        /* transition: background-color 0.1s ease-in-out; */
+      }
+      .console-output {
+        flex: 4;
+        overflow-wrap: anywhere;
+      }
+      .additional-info {
+        flex: 1;
         overflow: auto;
+        display: flex;
+        flex-direction: row;
+        min-width: 350px;
+        overflow-wrap: anywhere;
+      }
+      .console-container.hide-additional-info .additional-info {
+        display: none;
       }
 
-      #console span {
-        color: var(--color1);
+      .additional-info-title {
+        display: flex;
       }
 
-      #console.alternate-colors span:nth-child(even) {
-        color: var(--color1);
+      /* .console-container.alternate-colors .console-row:nth-child(even) {
+        color: var(--color1, #eeeeee);
       }
-      #console.alternate-colors span:nth-child(odd) {
-        color: var(--color2);
-      }
+      .console-container.alternate-colors .console-row:nth-child(odd) {
+        color: var(--color2, #aaaaaa);
+      } */
 
-      #console .ws-status-open {
+      .console-container.alternate-colors
+        .console-row:nth-child(even)
+        .console-output {
+        color: var(--color1, #eeeeee);
+      }
+      .console-container.alternate-colors
+        .console-row:nth-child(odd)
+        .console-output {
+        color: var(--color2, #aaaaaa);
+      }
+      .console-output .ws-status-open,
+      .additional-info .ws-status-open {
         color: rgb(0, 255, 0) !important;
       }
-      #console .ws-status-closed {
+      .console-output .ws-status-closed,
+      .additional-info .ws-status-closed {
         color: red !important;
       }
-
       label {
         margin-left: 10px;
       }
-
-      #setting-alternate-colors .color-field {
+      .setting-alternate-colors .color-field {
         width: 65px;
       }
-
-      #preview-color1 {
+      .preview-color1,
+      .preview-color2 {
         display: inline-block;
         width: 1.5em;
         height: 1.5em;
+      }
+
+      .preview-color1 {
         background-color: var(--color1);
       }
-
-      #preview-color2 {
-        display: inline-block;
-        width: 1.5em;
-        height: 1.5em;
+      .preview-color2 {
         background-color: var(--color2);
       }
-
       @media (max-width: 600px) {
-        #header {
+        .header {
           height: auto;
           flex-direction: column;
           align-items: center;
         }
-        #header .setting {
+        .header .setting {
           flex-direction: column;
           padding: 5px;
         }
-        #header .setting * {
+        .header .setting * {
           margin-top: 2px;
         }
-
-        #header .setting .setting-item {
+        .header .setting .setting-item {
           width: 100%;
           justify-content: end;
         }
       }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          filter: blur(8px);
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes flash {
+        /* 0% {
+          background-color: var(--highlight-color, #303030);
+        }
+        100% {
+          background-color: var(--color1, #eeeeee);
+        } */
+      }
     </style>
   </head>
   <body>
-    <!-- header panel with checkboxes -->
-    <div id="header">
-      <div class="setting" id="setting-alternate-colors">
+    <div class="header">
+      <div class="setting">
         <div class="setting-item">
           <label for="color1">Message color</label>
-          <input type="text" class="color-field" id="color1" value="#FFFFFF" />
-          <div id="preview-color1"></div>
+          <input
+            type="text"
+            class="color-field"
+            id="color1"
+            placeholder="#FFFFFF"
+          />
+          <div class="preview-color1"></div>
         </div>
         <div class="setting-item">
           <label for="alternateColors">Alternate</label>
           <input type="checkbox" checked id="alternateColors" />
-          <input type="text" class="color-field" id="color2" value="#AAAAAA" />
-          <div id="preview-color2"></div>
+          <input
+            type="text"
+            class="color-field"
+            id="color2"
+            placeholder="#AAAAAA"
+          />
+          <div class="preview-color2"></div>
+        </div>
+        <div class="setting-item">
+          <label for="fontSize">Font Size</label>
+          <input type="range" min="8" max="32" id="fontSize" value="12" />
+          <button id="resetFontSize" title="Reset Font Size">Reset</button>
+        </div>
+      </div>
+      <div class="setting">
+        <div class="setting-item">
+          <label for="highlightColor">Highlight color</label>
+          <input
+            type="text"
+            class="color-field"
+            id="highlightColor"
+            placeholder="#303030"
+          />
+          <div class="preview-color-highlight"></div>
+        </div>
+        <div class="setting-item">
+          <label for="enableHighlight">Highlight on hover</label>
+          <input type="checkbox" checked id="enableHighlight" />
         </div>
       </div>
       <div class="setting">
@@ -127,23 +234,31 @@
           <input type="checkbox" checked id="autoScroll" />
         </div>
         <div class="setting-item">
-          <button onclick="document.getElementById('console').innerHTML = ''">
+          <button
+            onclick="document.querySelector('#console-container').innerHTML = ''"
+          >
             Clear Console
           </button>
         </div>
       </div>
+      <div class="setting">
+        <div class="setting-item">
+          <label for="showAdditionalInfo">Additional Info</label>
+          <input type="checkbox" checked id="showAdditionalInfo" />
+        </div>
+      </div>
     </div>
-    <pre id="console" class="alternate-colors"></pre>
+    <div
+      id="console-container"
+      class="console-container alternate-colors"
+    ></div>
     <script>
-      const consoleElement = document.getElementById("console");
+      const consoleElement = document.getElementById("console-container");
       var alternateColorsCheckbox = document.getElementById("alternateColors");
       var color1Input = document.getElementById("color1");
       var color2Input = document.getElementById("color2");
 
       alternateColorsCheckbox.addEventListener("change", function () {
-        const settingAlternateColors = document.getElementById(
-          "setting-alternate-colors"
-        );
         if (this.checked) {
           consoleElement.classList.add("alternate-colors");
           color2Input.disabled = false;
@@ -152,6 +267,16 @@
           color2Input.disabled = true;
         }
       });
+
+      document
+        .querySelectorAll('.setting input[type="text"]')
+        .forEach((input) => {
+          input.addEventListener("input", function () {
+            this.style.width = `${
+              this.value.length + 2 > 9 ? this.value.length + 2 : 9
+            }ch`;
+          });
+        });
 
       color1Input.addEventListener("input", function () {
         var color1 = this.value;
@@ -163,7 +288,45 @@
         document.body.style.setProperty("--color2", color2);
       });
 
-      // Connect to the relayer. if the connection is closed, try to reconnect:
+      document
+        .getElementById("fontSize")
+        .addEventListener("input", function () {
+          document.body.style.setProperty("--font-size", this.value + "px");
+        });
+
+      document
+        .getElementById("resetFontSize")
+        .addEventListener("click", function () {
+          document.body.style.setProperty("--font-size", "16px");
+          document.getElementById("fontSize").value = 12;
+        });
+
+      var highlightColorInput = document.getElementById("highlightColor");
+      var enableHighlightCheckbox = document.getElementById("enableHighlight");
+
+      highlightColorInput.addEventListener("input", function () {
+        var highlightColor = this.value;
+        document.body.style.setProperty("--highlight-color", highlightColor);
+      });
+
+      enableHighlightCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+          document.body.style.setProperty("--highlight-enabled", "true");
+        } else {
+          document.body.style.setProperty("--highlight-enabled", "false");
+        }
+      });
+
+      document
+        .getElementById("showAdditionalInfo")
+        .addEventListener("change", function () {
+          var additionalOutput = document.querySelector(".console-container");
+          if (this.checked) {
+            additionalOutput.classList.remove("hide-additional-info");
+          } else {
+            additionalOutput.classList.add("hide-additional-info");
+          }
+        });
 
       var ws;
       reconnect();
@@ -176,39 +339,166 @@
 
       function wsOnMessage(event) {
         console.log("WebSocket message received:", event.data);
-        var messageElement = document.createElement("span");
+        const data = JSON.parse(event.data);
+        writeToConsoleAndAdditionalOutput(data);
+      }
 
-        messageElement.textContent = event.data;
-        consoleElement.appendChild(messageElement);
+      /**
+       * Writes the data to the console and additional output section
+       * @param {Object} data - The data to write to the console and additional output section
+       * @param {string} data.stdout - The text to write to the console
+       * @param {string} data.stderr - The text to write to the console
+       * @param {string|Object} data.info - The text or JSON to write to the additional output section, if it is a string it will be written as is, if it is JSON it will be parsed and handled first
+       */
+      function writeToConsoleAndAdditionalOutput(data) {
+        const consoleText = data.stdout || data.stderr;
 
-        var autoScrollCheckbox = document.getElementById("autoScroll");
-        if (autoScrollCheckbox.checked) {
-          consoleElement.scrollTop = consoleElement.scrollHeight;
+        // Create a new div for the console text
+        var consoleRow = document.createElement("div");
+        /*
+
+      <div class="console"></div>
+      <div class="additional-output"></div>
+        */
+        consoleRow.classList.add("console-row");
+        consoleRow.classList.add("new-row");
+        consoleRow.addEventListener("animationend", function () {
+          this.classList.remove("new-row");
+        });
+
+        // create new div for console text
+        var consoleOutputDiv = document.createElement("div");
+        consoleOutputDiv.classList.add("console-output");
+        consoleOutputDiv.innerHTML = consoleText;
+        consoleRow.appendChild(consoleOutputDiv);
+
+        // create new div for additional info text
+        var additionalInfoDiv = document.createElement("div");
+        additionalInfoDiv.classList.add("additional-info");
+
+        var additionalInfo_titleDiv = document.createElement("div");
+        additionalInfo_titleDiv.classList.add("additional-info-title");
+
+        var additionalInfo_name = document.createElement("div");
+        var additionalInfo_icons = document.createElement("div");
+
+        let additionalContext = "";
+        if (data.info) {
+          // compose additional output text from additionalJson
+          for (const [key, value] of Object.entries(data.info)) {
+            switch (key) {
+              case "name":
+                additionalInfo_name.textContent = value;
+                break;
+              case "icons":
+                if (value.length > 0) {
+                  for (const icon of value) {
+                    additionalInfo_icons.innerHTML += `<img src="${icon}" width="16" height="16"/>`;
+                  }
+                }
+
+                break;
+              default:
+                additionalContext += `<div>${key}: ${value}</div>`;
+            }
+          }
+        }
+
+        let showOutput = true;
+        // if console text contains specific keywords, add additional info
+        if (consoleText.includes("Starting")) {
+          additionalContext += `<div>🚫🫰⛽💰</div>`;
+        } else if (consoleText.includes("Chain is in sync")) {
+          additionalContext += `<div style="color:#00ff00;">🟢 Chain Syncronized</div>`;
+        } else if (consoleText.includes("Chain is not yet in sync")) {
+          additionalContext += `<div style="color:#ff0000;">🔴 Chain Not Syncronized</div>`;
+        } else if (consoleText.toLowerCase().includes("insufficient funds")) {
+          additionalContext += `<div style="color:orange;">❌💰 Insufficient funds</div>`;
+        } else if (consoleText.toLowerCase().includes("insufficient fee")) {
+          additionalContext += `<div style="color:orange;">❌⛽ Insufficient fee</div>`;
+        } else if (
+          consoleText.toLowerCase().includes("Error broadcasting packet")
+        ) {
+          showOutput = false;
+          additionalContext += `<div style="color:red;">❌📡 Error broadcasting packet</div>`;
+        } else if (consoleText.toLowerCase().includes("flush")) {
+          showOutput = false;
+          additionalContext += `<div>🚽</div>`;
+        } else if (
+          consoleText
+            .toLowerCase()
+            .includes("Giving up on sending packet message after max retries")
+        ) {
+          showOutput = false;
+          additionalContext += `<div style="color:red;">❌🤔 Max retries</div>`;
+        } else if (
+          consoleText.toLowerCase().includes("context deadline exceeded")
+        ) {
+          showOutput = false;
+          additionalContext += `<div style="color:red;">❌🤔 Context deadline exceeded</div>`;
+        } else if (
+          consoleText.toLowerCase().includes("Failed to query node status")
+        ) {
+          additionalContext += `<div style="color:red;">❌🤔 Failed to query node status</div>`;
+        } else if (consoleText.includes("Successful transaction")) {
+          // i only want the json from the above, so i need to split the string at the first {, and then parse the rest as json:
+          const jsonStart = consoleText.indexOf("{");
+          const jsonEnd = consoleText.lastIndexOf("}");
+          const json = consoleText.substring(jsonStart, jsonEnd + 1);
+          const jsonParsed = JSON.parse(json);
+          additionalContext += `<div style="color:#00ff00;">✅ Successful transaction. <a href="https://mintscan.io/akash/tx/${jsonParsed.tx_hash}">${jsonParsed.tx_hash}</a></div>`;
+        } else {
+          additionalContext += `<div style="color:yellow;">🤔 Unhandled</div>`;
+        }
+
+        if (showOutput) {
+          additionalInfo_titleDiv.appendChild(additionalInfo_icons);
+          additionalInfo_titleDiv.appendChild(additionalInfo_name);
+          additionalInfoDiv.appendChild(additionalInfo_titleDiv);
+          additionalInfoDiv.innerHTML += additionalContext;
+
+          consoleRow.appendChild(additionalInfoDiv);
+
+          // Append the console div to the console
+          var consoleContainerElement =
+            document.getElementById("console-container");
+          consoleContainerElement.appendChild(consoleRow);
+
+          // Scroll to the bottom of the console if the auto scroll checkbox is checked
+          var autoScrollCheckbox = document.getElementById("autoScroll");
+          if (autoScrollCheckbox.checked) {
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+          }
         }
       }
 
       function wsOnOpen(event) {
-        console.log("WebSocket connection opened", event.reason);
-        var wsStatusElement = document.createElement("span");
-        wsStatusElement.classList.add("ws-status-open");
-        wsStatusElement.textContent = "WebSocket connection opened\n";
-        consoleElement.appendChild(wsStatusElement);
-        consoleElement.scrollTop = consoleElement.scrollHeight;
+        console.log("WebSocket connection opened");
+        // var wsStatusElement = document.createElement("span");
+        // wsStatusElement.classList.add("ws-status-open");
+        // wsStatusElement.textContent = "WebSocket connection opened\n";
+        // consoleElement.appendChild(wsStatusElement);
+        // consoleElement.scrollTop = consoleElement.scrollHeight;
         // Listen for messages
         ws.onmessage = wsOnMessage;
       }
 
+      var isReconnecting = false;
+
       function wsOnClose(event) {
-        console.log(
-          "WebSocket connection closed. Reconnecting...",
-          event.reason
-        );
-        var wsStatusElement = document.createElement("span");
-        wsStatusElement.classList.add("ws-status-closed");
-        wsStatusElement.textContent =
-          "WebSocket connection closed. Reconnecting...\n";
-        consoleElement.appendChild(wsStatusElement);
-        consoleElement.scrollTop = consoleElement.scrollHeight;
+        if (!isReconnecting) {
+          console.warn(
+            "WebSocket connection closed. Reconnecting...",
+            event.reason
+          );
+          // var wsStatusElement = document.createElement("span");
+          // wsStatusElement.classList.add("ws-status-closed");
+          // wsStatusElement.textContent =
+          //   "WebSocket connection closed. Reconnecting...\n";
+          // consoleElement.appendChild(wsStatusElement);
+          // consoleElement.scrollTop = consoleElement.scrollHeight;
+          isReconnecting = true;
+        }
         // Attempt to reconnect
         reconnect();
       }

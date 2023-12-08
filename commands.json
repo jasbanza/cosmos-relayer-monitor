@@ -1,0 +1,15 @@
+{
+  "commands": [
+    {
+      "path": "/home/jason/go/bin/rly",
+      "arguments": ["start", "akash-osmosis", "--debug-addr", ":8001"],
+      "info": {
+        "name": "akash-osmosis",
+        "icons": [
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/akash/images/akt.png",
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmo.png"
+        ]
+      }
+    }   
+  ]
+}
