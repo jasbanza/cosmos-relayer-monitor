@@ -453,7 +453,7 @@
           const jsonEnd = consoleText.lastIndexOf("}");
           const json = consoleText.substring(jsonStart, jsonEnd + 1);
           const jsonParsed = JSON.parse(json);
-          additionalContext += `<div style="color:#00ff00;">✅ Successful transaction. <a href="https://mintscan.io/akash/tx/${jsonParsed.tx_hash}">${jsonParsed.tx_hash}</a></div>`;
+          additionalContext += `<div style="color:#00ff00;">✅ Successful transaction. <a href="https://mintscan.io/akash/tx/${jsonParsed.tx_hash}" target="_blank">${jsonParsed.tx_hash}</a></div>`;
         } else {
           additionalContext += `<div style="color:yellow;">🤔 Unhandled</div>`;
         }
@@ -479,8 +479,11 @@
         }
       }
 
+      var isReconnecting = false;
+
       function wsOnOpen(event) {
         console.log("WebSocket connection opened");
+        isReconnecting = false;
         // var wsStatusElement = document.createElement("span");
         // wsStatusElement.classList.add("ws-status-open");
         // wsStatusElement.textContent = "WebSocket connection opened\n";
@@ -490,7 +493,6 @@
         ws.onmessage = wsOnMessage;
       }
 
-      var isReconnecting = false;
 
       function wsOnClose(event) {
         if (!isReconnecting) {
