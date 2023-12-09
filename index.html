@@ -90,7 +90,7 @@
         display: flex;
         flex-direction: row;
         min-width: 350px;
-        overflow-wrap: anywhere;
+        gap: 5px;
       }
       .console-container.hide-additional-info .additional-info {
         display: none;
@@ -98,6 +98,13 @@
 
       .additional-info-title {
         display: flex;
+      }
+
+      .additional-info a {
+        /* set color and visited color */
+        color: #00ffff;
+        text-decoration: none;
+        overflow-wrap: anywhere;
       }
 
       /* .console-container.alternate-colors .console-row:nth-child(even) {
