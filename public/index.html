@@ -2,192 +2,13 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      :root {
-        --color1: #eeeeee;
-        --color2: #aaaaaa;
-        --highlight-color: #303030;
-        --highlight-enabled: true;
-        --font-size: 12px;
-      }
-      body {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        height: 100vh;
-        margin: 0;
-        padding: 0;
-        background-color: black;
-        color: white;
-        overflow: hidden;
-        font-family: monospace;
-      }
-      .header {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        background-color: #666;
-        color: white;
-        font: 0.8em sans-serif;
-        padding: 5px;
-      }
-      .header .setting {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin: 2px 10px;
-        background-color: #333;
-        padding: 2px;
-        border-radius: 3px;
-      }
-      .header .setting .setting-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-      }
-      .header .setting .setting-item label {
-        margin-right: 5px;
-      }
-      .header .setting .setting-item input[type="text"] {
-        width: 9ch;
-        min-width: 9ch;
-        text-align: center;
-      }
+    <link rel="manifest" href="manifest.json" />
+    <title>Relayer Console</title>
+    <script>
+      navigator.serviceWorker.register("service-worker.js");
+    </script>
+    <link rel="stylesheet" href="style.css" />
 
-      .console-container {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        color: var(--color1, #eeeeee);
-        font-family: monospace;
-        font-size: var(--font-size, 12px);
-        overflow-y: auto;
-        transition: font-size 0.2s ease-in-out;
-      }
-
-      .console-row {
-        display: flex;
-        gap: 5ch;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-      /* .new-row {
-        animation: flash 0.05s ease-in-out;
-      } */
-
-      .console-row:hover {
-        background-color: var(--highlight-color, #303030);
-        /* transition: background-color 0.1s ease-in-out; */
-      }
-      .console-output {
-        flex: 4;
-        overflow-wrap: anywhere;
-      }
-      .additional-info {
-        flex: 1;
-        overflow: auto;
-        display: flex;
-        flex-direction: row;
-        min-width: 350px;
-        gap: 5px;
-      }
-      .console-container.hide-additional-info .additional-info {
-        display: none;
-      }
-
-      .additional-info-title {
-        display: flex;
-      }
-
-      .additional-info a {
-        /* set color and visited color */
-        color: #00ffff;
-        text-decoration: none;
-        overflow-wrap: anywhere;
-      }
-
-      /* .console-container.alternate-colors .console-row:nth-child(even) {
-        color: var(--color1, #eeeeee);
-      }
-      .console-container.alternate-colors .console-row:nth-child(odd) {
-        color: var(--color2, #aaaaaa);
-      } */
-
-      .console-container.alternate-colors
-        .console-row:nth-child(even)
-        .console-output {
-        color: var(--color1, #eeeeee);
-      }
-      .console-container.alternate-colors
-        .console-row:nth-child(odd)
-        .console-output {
-        color: var(--color2, #aaaaaa);
-      }
-      .console-output .ws-status-open,
-      .additional-info .ws-status-open {
-        color: rgb(0, 255, 0) !important;
-      }
-      .console-output .ws-status-closed,
-      .additional-info .ws-status-closed {
-        color: red !important;
-      }
-      label {
-        margin-left: 10px;
-      }
-      .setting-alternate-colors .color-field {
-        width: 65px;
-      }
-      .preview-color1,
-      .preview-color2 {
-        display: inline-block;
-        width: 1.5em;
-        height: 1.5em;
-      }
-
-      .preview-color1 {
-        background-color: var(--color1);
-      }
-      .preview-color2 {
-        background-color: var(--color2);
-      }
-      @media (max-width: 600px) {
-        .header {
-          height: auto;
-          flex-direction: column;
-          align-items: center;
-        }
-        .header .setting {
-          flex-direction: column;
-          padding: 5px;
-        }
-        .header .setting * {
-          margin-top: 2px;
-        }
-        .header .setting .setting-item {
-          width: 100%;
-          justify-content: end;
-        }
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          filter: blur(8px);
-        }
-        to {
-          opacity: 1;
-        }
-      }
-      @keyframes flash {
-        /* 0% {
-          background-color: var(--highlight-color, #303030);
-        }
-        100% {
-          background-color: var(--color1, #eeeeee);
-        } */
-      }
-    </style>
   </head>
   <body>
     <div class="header">
@@ -492,7 +313,6 @@
         // Listen for messages
         ws.onmessage = wsOnMessage;
       }
-
 
       function wsOnClose(event) {
         if (!isReconnecting) {

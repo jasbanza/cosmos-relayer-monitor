@@ -8,6 +8,8 @@ const { spawn } = require('child_process');
 const os = require('os');
 
 const app = express();
+app.use(express.static('public'));
+
 const server = require('http').createServer(app);
 const wss = new WebSocket.Server({ server });
 
@@ -53,5 +55,5 @@ commands.forEach(command => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'));
+    res.sendFile(path.join(__dirname, '/public/index.html'));
 });
